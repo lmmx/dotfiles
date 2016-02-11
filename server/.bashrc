@@ -14,3 +14,5 @@ if command -v tmux>/dev/null; then
                 [ -z $TMUX ] && tmux
         fi
 fi
+
+PS1=" \[\e[1;34m\]🌊 \[\e[0m\] \w $\[\033[00m\] "
