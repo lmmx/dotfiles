@@ -1,0 +1,143 @@
+# Handy medium-sized functions
+# = = = = = = = = = = = = = =
+
+function clipconfirm {
+	xclip -o | xclip -sel clip
+	if [[ $(xclip -o) == '' ]]
+	then
+		echo "Nothing copied"
+	else
+		echo "$(xclip -o) copied to clipboard"
+	fi
+}
+
+# swap two files via a temporary file:
+function quickfileswap()	{
+  if [ "$#" -ne 2 ]; then
+    >&2 echo "Woah there! 2 files were not provided, file swap halted."
+    return
+  fi
+	local TMPFILE=tmp.$$
+	mv "$1" $TMPFILE
+	mv "$2" "$1"
+	mv $TMPFILE "$2"
+}
+
+function findapdf	(){
+	pdfhold="held"
+	pdfsearchlist=$(find / -path /usr/share -prune -o -iname "$@"*.pdf 2>/dev/null | sed '/\/usr\/share/d')
+	# echo "$pdfsearchlist" | awk '{printf("%5d %s\n", NR,$0)}' | sed 's/^ *//'
+	if [[ "$@" != '' ]]; then
+		if [[ $(echo "$pdfsearchlist" | wc -l) == 1 ]]; then
+			evince "$pdfsearchlist"
+		else
+			pdflistcount=0
+			prepdfbase_IFS=$IFS
+			IFS=$'\n'
+			for pdfbaseline in $(echo "$pdfsearchlist"); do
+				(( pdflistcount++ ))
+				echo -e $pdflistcount"\t"$(basename "$pdfbaseline")
+			done
+			IFS=$prepdfbase_IFS
+			printf "Please choose a file: "
+			read pdfnum
+			if [[ $pdfnum -gt 0 ]] && [[ $pdfnum -le $pdflistcount ]]; then
+				selectedpdf=$(echo "$pdfsearchlist" | sed $pdfnum'q;d')
+				evince "$selectedpdf"
+			else
+				echo "Please enter a number between 1 and "$pdflistcount"."
+			fi
+		fi
+	fi
+	pdfhold="released"
+}
+
+# Tilde-format file paths
+# =======================
+
+# get the path to a file, using `dirs` rather than `pwd` for nicer ~ path format
+function pathto() {
+	for target in "$@"; do
+		target_filename="$(basename $target)"
+		targetdir='.'
+		if [ "$(dirname $target)" != '.' ]; then
+			cd "$(dirname $target)"
+			targetdir="$(dirs -c; dirs)"
+			cd - > /dev/null 2>&1
+		fi
+		echo -n "$targetdir"/"$target_filename"
+	done
+}
+# lazy clipboard function for pathto
+function copypathto() {
+	for CPT_item in "$@"; do
+		pathto "$CPT_item"
+	done | xclip -sel clip
+}
+
+# Set scripts running immune to hangups
+# =====================================
+
+function nohupscript() {
+	for nohupsh in "$@"
+	do
+		if
+			[ $(basename "$nohupsh") == "$nohupsh" ]
+		then
+			nohupsh="$(pwd)/$nohupsh"
+		else
+			nohupsh="$(cd $(dirname $nohupsh); pwd)/$(basename "$nohupsh")"
+		fi
+		nohup "$nohupsh" >"$nohupsh".out 2>"$nohupsh".err &
+	done
+}
+function marquee() { 
+	for frame in "$@"
+	do
+		jp2a --background=light -z "$frame" --chars=f\ \ \ && sleep 0.1
+		clear
+	done
+}
+
+# Search an .odt document
+# =======================
+
+function odtgrep () {
+    term="$1"
+    for file in *.odt; do
+        unzip -p "$file" content.xml | tidy -q -xml 2> /dev/null | grep "$term";
+        if [ $? -eq 0 ]; then
+            echo $file;
+        fi;
+    done 
+}
+
+# Start a timer for a given amount of time
+# ========================================
+
+function giz {
+	if [[ "$1" =~ h ]]; then
+		termdown $(echo $1 | awk '{split($0,a,"h|m|s"); print a[1]*3600 + a[2]*60 + a[3]}') && mpg123 -q ~/Music/Coin-Mario.mp3;
+	else
+		if [[ "$1" =~ m ]]; then
+			termdown $(echo $1 | awk '{split($0,a,"m|s"); print a[1]*60 + a[2]}') && mpg123 -q ~/Music/Coin-Mario.mp3;
+		else termdown $(echo $1 | awk '{split($0,a,"s"); print a[1]}') && mpg123 -q ~/Music/Coin-Mario.mp3;
+		fi
+	fi;
+}
+
+# Add an event to Google Calendar
+# ===============================
+
+function addtogcal {
+	printf '\033[0;33mTitle\nLocation\nWhen\nDuration (mins)\033[0m\n'
+	tput home
+	gcalcli --reminder 30 --descr '' add | cat | sed 's/(mins): /(mins): \n/' > ~/.truthtee
+	printf '\033[8;5;44t'
+	clear
+	echo ''
+	calurl=$(head -2 ~/.truthtee | tail -1 | cut -d ' ' -f 4)
+	[[ ${calurl:0:4} != 'http' ]] && tail --lines=+2 ~/.truthtee && echo "Press any key to quit" && read -d '' -s -n1 && exit
+	echo "Hit enter to visit $calurl, or any other key to quit" && read -d '' -s -n1 && [[ $REPLY == $'\x20' ]] && exit
+	[[ $REPLY == $'\x0a' ]] && google-chrome $calurl
+}

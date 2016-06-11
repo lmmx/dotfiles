@@ -1,0 +1,79 @@
+# Some of the functions below are aliases, before I found out on some random message board that elaborate aliases are actually bad
+
+# (audio bioinfo chromix gif git medium network scrapped shots)
+for bashrc_funcs_file in ~/dotfiles/bashrc/bashrc_functions_*; do
+  source $bashrc_funcs_file;
+done
+
+# Small aliases and defaults
+# ==========================
+
+alias gobuild='go build'
+alias gogetv='go get -v'
+alias chrome='google-chrome --disable-gpu'
+alias grepcol='grep --color=always'
+alias python='python3'
+alias pep8ify='autopep8 --in-place --aggressive --aggressive'
+alias jup-nb='jupyter-notebook'
+alias jup-debug='jupyter-notebook >> ~/Desktop/jup.log 2>> ~/Desktop/jup_err.log'
+alias weather="curl -4 http://wttr.in/Manchester"
+alias runsd='Rscript "$scholaRdaemon/run_daemon"'
+alias runsdaemon-debug='Rscript "$scholaRdaemon/run_daemon" --debug'
+alias ls='ls --color=auto'
+alias less='less -R'
+alias s='less -S'
+alias tsvshow="column -t -s $'\t'"
+alias tsvview='tsvshow | s'
+alias recent='ls -ht | head'
+alias recentsizes='du -h $(recent)'
+alias webcleanclipoverwrite='webcleanclip | xclip -sel clip'
+alias c='clear'
+alias timenow="date '+%A %X'"
+alias addList="paste -sd+ | bc -l"
+
+alias vtmuxconf='vim /home/louis/.tmux.conf'
+alias vbashrc='vim /home/louis/.bashrc'
+alias bbbash='source /home/louis/.bashrc'
+alias tttmuxconf='tmux source-file /home/louis/.tmux.conf'
+alias nameserverconf="sudo vim /etc/resolv.conf"
+
+
+# Handy little helpers
+# ====================
+
+# named for ease of bash tab-autocompletion
+
+function mdclip	() { pandoc -S "$@" | xclip -t text/html -selection clipboard; }
+function cutf		(){ cut -d $'\t' -f "$@"; }
+function cuts		(){ cut -d ' ' -f "$@"; }
+function findafile	(){ find / -iname "$@" 2>/dev/null; }
+function findit		(){ find ./ -iname "$@" 2>/dev/null; }
+function howbigis () { du -h "$@"; }
+function awkcols { awk -F "\t" '{print NF}' "$@"; }
+function expandt { expand -t 20,40,160 "$@"; }
+function striptoalpha	(){ for thisword in $(echo "$@" | tr -dc "[A-Z][a-z]\n" | tr [A-Z] [a-z]); do echo $thisword; done; }
+
+function neweditr () { editr --new-file "$1"; }
+
+function mkcd() { mkdir "$@"; cd "$@"; }
+
+# Ruby-related
+# ============
+
+function listgems 	() { gem list "^$@$" --remote --all; }
+function listgemsregex	() { gem list "" --remote --all; }
+
+# Go-related
+# ==========
+
+# useful for executing Go binaries (same name as working dir.) :
+function wdexec() { "./$(basename "$PWD")"; }
+
+# specifically for doing the above after building:
+function gomakeitrun { go build; ./*; }
+
+# Jekyll-related
+# ==============
+
+function jekgrep () { grep -r "$@" --exclude-dir=\_site; }
+

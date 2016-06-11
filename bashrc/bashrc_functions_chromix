@@ -1,0 +1,44 @@
+# Chromix-related
+# ===============
+function pingpong { pingcheck=$(chromix ping; echo $?); }
+function quietly () { "$@" > /dev/null 2>&1; }
+function servertogo () {
+	if [[ "$@" == '' ]]
+	then
+		echo "chromix-server is running"
+	else
+		chromix "$@"
+	fi
+}
+
+function gogochromix () {
+	quietly pingpong
+	if [ $pingcheck == 0 ]
+	then
+		# Success, execute final chromix commands
+		servertogo "$@"
+	else
+		quietly chromix-server & killid=$!
+		sleep 1
+		quietly pingpong
+		if [ $pingcheck == 0 ]
+		then
+			# Success on second attempt, exit chromix commands
+			servertogo "$@"
+		else
+			sleep 1
+			if [ $pingcheck == 0 ]
+			then
+				servertogo "$@"
+			else
+				sleep 1
+				if [ $pingcheck == 0 ]
+				then
+					servertogo "$@"
+				else
+					echo "giving up"
+				fi
+			fi
+		fi
+	fi
+}

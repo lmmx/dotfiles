@@ -1,0 +1,42 @@
+export PATH=$PATH:~/.local/bin
+#export PATH="${PATH}:~/.local/bin"
+export GOPATH=$HOME/.go
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:${GOPATH//://bin:}/bin
+export PATH=$PATH:/usr/local/MATLAB/R2013a_Student/bin
+export MATLAB_EXECUTABLE=/usr/local/MATLAB/R2013a_Student/bin/matlab
+export LADSPA_PATH=/usr/lib/x86_64-linux-gnu/lmms/ladspa
+export COPASIDIR=/home/louis/opt/copasi
+export PATH=$PATH:/home/louis/opt/bin
+export PATH=$PATH:/home/louis/opt/homer/bin/
+export PATH=$PATH:/usr/bin/edirect
+export PATH=$PATH:/usr/bin/formd
+export PATH=$PATH:/usr/local/bin/rssowl
+export PATH=$PATH:/home/louis/.scripts/exports
+#export PATH=$PATH:/usr/bin/seaview
+export PATH=$PATH:/usr/local/bin/drive-linux-amd64
+export PATH=$PATH:/home/louis/opt/Komodo-Edit-9/bin
+export PATH=$PATH:/home/louis/opt/BytecodeViewer
+export PATH=$PATH:/home/louis/opt/FFcast/usr/bin
+export PATH=$PATH:/home/louis/opt/miller/bin/
+export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[0;32m\] 🚶\[\033[01;34m\] \w \$\[\033[00m\] "
+export PS2="\[\033[0;32m\] 🚵\[\033[00m\] "
+#export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\]"
+export COMMAND_NOT_FOUND_FORCE_PYTHON2 # weird Anaconda-produced bug
+export PATH=$ROOTSYS/bin:$PATH
+export HDF5_HOME=/usr/local/hdf5/
+export LD_LIBRARY_PATH=$ROOTSYS/lib:$LD_LIBRARY_PATH
+export scholaRdaemon="/home/louis/Dropbox/Y3/Programming/scholaRdaemon/"
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
+
+# Add RVM to PATH for scripting
+export PATH="$PATH:$HOME/.rvm/bin"
+
+# added by Anaconda3 2.4.0 installer
+export PATH="/home/louis/anaconda3/bin:$PATH"
+
+# Systems Biology Workbench
+export PATH="$PATH:/home/louis/sbw-2.10.0/bin/"
+export HISTTIMEFORMAT="%d/%m/%y %T " # get timestamps in history http://askubuntu.com/a/391087/266014

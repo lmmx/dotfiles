@@ -1,0 +1,93 @@
+# Function scrap heap
+# ====================
+
+# Bunch of no longer used functions for undergraduate essay literature citation/access:
+  
+#   function mmrlit { cat ~/Dropbox/Y3/MMR/Essay/literature_table.tsv; }
+#   function mmrlitedit { vim ~/Dropbox/Y3/MMR/Essay/literature_table.tsv; }
+#   function mmrlitgrep	(){ grep -i "$@" ~/Dropbox/Y3/MMR/Essay/literature_table_with_DOIs.tsv; }
+#   function mmrlitdoi	(){ mmrlitgrep "$@" | cut -d $'\t' -f 4 | tr -d '\n' | xclip -sel p; clipconfirm;  }
+#   function mmrlitdoicite	(){ mmrlitgrep "$@" | cut -d $'\t' -f 4 | awk '{print "`r citet(\""$0"\")`"}' | tr -d '\n' | xclip -sel p; clipconfirm; }
+#   function litgrep     (){ grep -i "$@" ~/Dropbox/Y3/Project/Review/Manuscript/literature_ratings.tsv; }
+#   function preslitgrep     (){ grep -i "$@" ~/Dropbox/Y3/Post-Genome\ Bio/Discussion\ presentations/Presentation\ work/literature_table.tsv; }
+#   function preslitname	() { preslitgrep "$@" | cutf 1-3 | awk '{split($0,a,"\t"); print a[1]" ("a[2]") "a[3]".pdf"}'; }
+#   function preslitcp () { preslitname "$@" | xclip -sel p; clipconfirm; }
+#   function litdoicite	(){ litgrep "$@" | cut -d $'\t' -f 4 | awk '{print "`r citet(\""$0"\")`"}' | tr -d '\n' | xclip -sel p; clipconfirm; }
+#   function litadd	(){ echo $(xclip -o) | awk '{split($0,a,"[()]"); printf a[1]"\t"a[2]"\t"a[3]"\t\t\n"}' >> ~/Dropbox/Y3/Project/Review/Manuscript/literature_ratings.tsv; litedit; }
+#   function litedit	  { vim ~/Dropbox/Y3/Project/Review/Manuscript/literature_ratings.tsv; }
+#   function titlecopy	(){ ls "$@" | awk '{split($0,a,".pdf"); print a[1]}' | xclip -sel p; clipconfirm; }
+#   function littitlecopy	(){ ls ~/Dropbox/Y3/Project/Review/Literature/"$@"* | awk '{split($0,a,"/Literature/|.pdf"); printf a[2]}' | xclip -sel p; clipconfirm; }
+
+# BBC IPlayer Linux access has been shut off between 2014 and 2016 as far as I can tell
+
+#   alias iplay='get_iplayer 2>/dev/null'
+#   alias iplayr='get_iplayer --type=radio 2>/dev/null'
+#   export LD_LIBRARY_PATH=/usr/lib/i386-linux-gnu/libXm.so.4/lib:/usr/lib/x86_64-linux-gnu/libXmu.so.6.2.0/lib:/usr/lib/x86_64-linux-gnu/libXmu.so.6
+#   function iplayrgrep 	(){ get_iplayer --type=radio 2>/dev/null | grep -i "$@" 2> /dev/null; }
+
+# When I used kanban boards to keep track of tasks etc (before Trello appeared)
+
+#   function func_kanupd8	(){ kanout="$(cd ~/Dropbox/kanban/"$@"; ./bin/kanban ./data.txt; cd - > /dev/null)"; echo $(echo $(echo "$kanout" | sed "1d;\$d" | sed "s/board .*$/board\.\.\./g")); echo $(echo "$kanout" | tail -1); }
+#   function func_kanedit	(){ vim ~/Dropbox/kanban/"$@"/data.txt && func_kanupd8 "$@"; }
+#   function func_kanview	(){ ( xdg-open ~/Dropbox/kanban/"$@"/html/index.html &) > /dev/null 2>&1; }
+#   function func_kancss	(){ vim ~/Dropbox/kanban/"$@"/view/board.css && func_kanupd8 "$@"; }
+#   function yeswekanban 	  { func_kanupd8 main; 		}
+#   function kankan 	  { func_kanedit main;		}
+#   function seekanban 	  { func_kanview main;		}
+#   function editkancss 	  { func_kancss main;		}
+#   function blogkanban 	  { func_kanupd8 writing;	} 
+#   function blogkanbanplan   { func_kanedit writing;	}
+#   function blogkanbanview   { func_kanview writing;	}
+#   function blogkanbancss 	  { func_kancss writing;	}
+#   function devkanban 	  { func_kanupd8 dev;		}
+#   function devkanbanplan 	  { func_kanedit dev;		}
+#   function devkanbanview 	  { func_kanview dev;		}
+#   function blogkanbancss 	  { func_kancss dev;		}
+
+# Overthought search function for the findaphd.com website
+
+#   function phdsearch (){
+#   	allpages=''
+#   	searchresults=''
+#   	findaphdurl="http://www.findaphd.com/search/phd.aspx?SAID=502&FID=UK&PP=50"
+#   	thispage=$(curl -s "$findaphdurl")
+#   	flags=$(echo "$@" | awk -F\  '{print substr($2,2)}')
+#   	pagecounter='0'
+#   	pagelist=$(echo "$thispage" | grep 'PG=' |  sed 's/onclick/\n/g' | awk '{split($0,a,"window.location="); print a[2]}' | awk -F\' '{print $2}' | sort | uniq | sed '/^$/d')
+#   	preparseIFS=$IFS
+#   	IFS=$'\n'
+#   	for eachpage in $(echo "$pagelist"); do
+#   		(( pagecounter++ ))
+#   		echo "Page $pagecounter"
+#   		freshpage=$(curl -s $eachpage)
+#   		allpages=$(echo -e "$allpages\n$freshpage")
+#   	done
+#   	ends=$(echo "$allpages" | grep -nB 4 'divStatsFooter"' | grep '</div>' | awk -F\- '{print $1}')
+#   	means=$(echo "$allpages" | grep -n 'id="SearchResults"' | awk -F\: '{print $1}')
+#   	parsepairs=$(paste <(echo "$means") <(echo "$ends") --delimiters '\t')
+#   	searchresults=$(
+#   	IFS=$'\n'
+#   	for parsepair in ${parsepairs[@]}; do
+#   		echo "$allpages" | sed $(echo "$parsepair" | awk -F\\t '{print $1}')","$(echo "$parsepair" | awk -F\\t '{print $2}')'!d' | tail --lines=+2 | head -n -1
+#   	done
+#   	)
+#   	listingstitles=$(echo "$searchresults" | grep 'lMainLink" title' | awk '{split($0,a,"hlMainLink\" title=\""); print a[2]}' | awk -F\" '{print $1}' | sed 's/^PhD Research Project:/PhD:/g')
+#   	listingslinks=$(echo "$searchresults" | grep 'lMainLink" title' | awk '{split($0,a,"class=\"titleLink\" href=\""); print a[2]}' | awk -F\" '{print "http://www.findaphd.com/search/"$1}')
+#   	listings=$(paste <(echo "$listingstitles") <(echo "$listingslinks") --delimiters '\t')
+#   #	echo $listingslinks | awk '{print $(curl -s http://is.gd/api.php?longurl=)"$0}'
+#   #	echo "$listings"
+#   	IFS=$preparseIFS
+#   	echo "$listings" | expand -t 180
+#   }
+
+# forgotten why I wrote this... so not going to leave it lying around
+#   function b() {
+#   	str=""
+#   	count=0
+#   	while [ "$count" -lt "$1" ];
+#   	do
+#   		str=$str"../"
+#   		let count=count+1
+#   	done
+#   	cd $str
+#   }

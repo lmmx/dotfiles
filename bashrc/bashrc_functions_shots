@@ -1,0 +1,29 @@
+# Used for hassle-free image hosting on GitHub
+# https://github.com/lmmx/shots
+
+function take-shot 	(){
+	# Allow take-shot without versioning: create array if one doesn't exist
+	if [ -z ${shots+x} ]; then shots=(); fi
+	# would leave array lying around so needs wrapper to clean up: make-shots
+	shootyear="$(date | awk '{print $6}')";
+	shootmonth="$(date | awk '{print $2}')";
+	mkdir -p "/gits/shots/$shootyear/$shootmonth";
+	shotfile="$(echo "$@")";
+	cp "$shotfile" "/gits/shots/$shootyear/$shootmonth";
+	shotfilename=$(basename "$shotfile");
+	encodedshot="$(python -c 'from urllib import quote; print quote("'"$shotfilename"'").encode("utf-8")')"
+	shots+=("https://raw.githubusercontent.com/lmmx/shots/master/$shootyear/$shootmonth/$encodedshot");
+}
+function make-shots	(){ for shot in "$@"; do take-shot $shot; done; shots=""; }
+function take-shots	(){ for shot in "$@"; do take-shot $shot; done; }
+function shoot          (){
+	shots=();
+	take-shots "$@";
+        cd /gits/shots/;
+	git add --all;
+        git commit -m "Added $@";
+	git push origin master;
+	cd - > /dev/null;
+	printf '%s\n' "${shots[@]}";
+}
+

@@ -1,0 +1,55 @@
+# Git-related
+# ===========
+
+source /gits/git-helpers/.git-rc
+alias gstat="git status"
+alias gadd="git add --all"
+alias gdiff='git diff --cached -- "$(git rev-parse --show-toplevel)"'
+alias gdiffpre='git diff -- "$(git rev-parse --show-toplevel)"'
+alias got="git push origin master"
+function gcmmt { git commit -m "$@"; }
+function gcmmtpush { gcmmt "$@"; got; }
+function gclocd {
+	# git clone and enter the cloned file
+	if [[ -z "$2" ]]; then
+		reponame=$(basename "$1" ".git");
+	else
+		reponame=$2;
+	fi
+	git clone "$1" "$reponame";
+	cd "$reponame";
+}
+
+function gnews		  {
+	gitnews="$(git status --porcelain)";
+	export gitnews;
+	gitreport="$(python -c 'from os import environ as e; gnew=e["gitnews"].split("\n");\
+	mods=[stat[3:] for stat in gnew if stat[0]=="M"];\
+	adds=[stat[3:] for stat in gnew if stat[0]=="A"];\
+	dels=[stat[3:] for stat in gnew if stat[0]=="D"];\
+	rens=[stat[3:] for stat in gnew if stat[0]=="R"];\
+	cops=[stat[3:] for stat in gnew if stat[0]=="C"];\
+	upds=[stat[3:] for stat in gnew if stat[0]=="U"];\
+	modreport=["Changed ".join(["",", ".join(statuslist)]) for statuslist in [mods] if len(mods)>0];\
+	addreport=["Added ".join(["",", ".join(statuslist)]) for statuslist in [adds] if len(adds)>0];\
+	delreport=["Deleted ".join(["",", ".join(statuslist)]) for statuslist in [dels] if len(dels)>0];\
+	renreport=["Renamed ".join(["",", ".join(statuslist)]) for statuslist in [rens] if len(rens)>0];\
+	copreport=["Copied ".join(["",", ".join(statuslist)]) for statuslist in [cops] if len(cops)>0];\
+	updreport=["Updated ".join(["",", ".join(statuslist)]) for statuslist in [upds] if len(upds)>0];\
+	report=[". ".join(stats) for stats in [modreport,addreport,delreport,renreport,copreport,updreport] if len(stats)>0];\
+	print(". ".join(report))')";
+	unset gitnews;
+	echo "$gitreport";
+}
+function getgot		  {
+	git add --all;
+	commitment="$(gnews)";
+	git commit -m "$commitment";
+	git push origin master;
+}
+function getgotheroku		  {
+	git add --all;
+	commitment="$(gnews)";
+	git commit -m "$commitment";
+	git push heroku master;
+}

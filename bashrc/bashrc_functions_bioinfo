@@ -1,0 +1,165 @@
+# Bioinformatics / biological research-related
+# ============================================
+
+# Bunch of functions related to accessing NCBI services and handling DOI info
+
+function pubmed		(){ esearch -db pubmed -query "$@" | efetch -format docsum | xtract -pattern DocumentSummary -present Author -and Title -element Id -first "Author/Name" -element Title; }
+function pubmeddocsum	(){ esearch -db pubmed -query "$@" | efetch -format docsum; } 
+function pubmedextractdoi (){ pubmeddocsum "$@" | xtract -pattern DocumentSummary -element Id -first "Author/Name" -element Title SortPubDate -block ArticleId -match "IdType:doi" -element Value | awk '{split($0,a,"\t"); split(a[4],b,"/"); print a[1]"\t"a[2]"\t"a[3]"\t"a[5]"\t"b[1]}'; }
+function pubmeddoi	(){ pubmedextractdoi "$@" | cutf 4; }
+function getdoispaced	(){
+	if [[ $(echo "$@" | cuts 2) =~ [0-2][0-9]{3} ]]; then
+		tabseppub=$(echo -e "$(echo $@ | cuts 1-2 | tr ' ' '\t')\t$(echo $@ | cuts 3-)")
+		AddPubDOI "$tabseppub" | cutf 4
+	fi
+}
+function pubmeddoiclip	(){ pubmeddoimulti "$@" | xclip -sel p; clipconfirm; }
+function pubmeddoimulti (){ 
+	xtracted=$(pubmedextractdoi "$@")
+	if [[ $(echo "$xtracted" | cutf 4) == '' ]]
+	then
+		if [[ $xtracted == '' ]]
+		then
+			failcurl=$(curl -s "http://www.ncbi.nlm.nih.gov/pubmed?cmd=search&term="$(echo "$thistitle $thisauthor $thisyear" | tr ' ' '+'))
+			curledpmid=$(echo "$failcurl" | grep 'sid="1" type="checkbox" id="UidCheckBox' | sed -n -e 's/^.*sid="1" type="checkbox" id="UidCheckBox//p' | awk -F\" '{print $1}')
+			if [[ $curledpmid == '' ]]
+			then
+				echo "DOI NA: PMID NA"
+			else	
+				curleddoi=$(pmid2doimulti $curledpmid)
+				if [[ $curleddoi == '' ]]
+				then
+					echo "DOI NA: PMID "$curledpmid
+				else
+					echo $curleddoi
+				fi
+        		fi
+		else
+			xtractedpmid=$(echo "$xtracted" | cutf 1)
+			pmid2doirestful "$xtractedpmid"
+		fi
+	else
+		echo "$xtracted" | cutf 4
+	fi
+}
+
+function pubmeddoicite  (){ pubmeddoi "$@" | tr -d '\n' | xclip -sel p; clipconfirm; }
+function pubmedrel 	(){ esearch -db pubmed -query "$@" | elink -related | efilter -query "NOT historical article [FILT]" | efetch -format docsum | xtract -pattern DocumentSummary -present Author -and Title -element Id -first "Author/Name" -element Title; }
+function pmid2doi	(){ curl -s www.pmid2doi.org/rest/json/doi/"$@" | awk '{split($0,a,",\"doi\":\"|\"}"); print a[2]}'; }
+function pmid2doimulti 	(){
+	curleddoi=$(pmid2doi "$@")
+	if [[ $curleddoi == '' ]]
+	then
+		pmid2doincbi "$@"
+	else
+		echo "$curleddoi"
+	fi
+}
+function pmid2doincbi 	(){
+	xtracteddoi=$(pubmedextractdoi "$@")
+	if [[ $xtracteddoi == '' ]]
+	then
+		echo "DOI NA (pmid2doincbi): $@"
+	else
+		echo "$xtracteddoi"
+	fi
+}
+function unknownDOIs	(){ grep 'DOI NA' "$@"; }
+function DOIopen () {
+	preopen_IFS=$IFS
+	IFS=$'\n'
+	for line in $(cat "$@"); do
+		doisect=$(echo "$line" | cutf 4)
+		if ! [[ $doisect =~ 'DOI NA' || $doisect == 'DOI' ]]; then
+			google-chrome "http://dx.doi.org/"$doisect
+			read dummyvar
+		fi
+	done
+	IFS=$preopen_IFS
+}
+function AddPubTableDOIs   () {
+	old_IFS=$IFS
+	IFS=$'\n'
+	for line in $(cat "$@"); do
+		DOIresp=$(AddPubDOI "$line" 2>/dev/null)
+		if [[ $DOIresp =~ 'DOI NA' ]]; then
+			# try again in case it's just NCBI rate throttling, but just the once
+			DOIresp2=$(AddPubDOI "$line" 2>/dev/null)
+			if [[ $(echo "$DOIresp2" | awk 'BEGIN{FS="\t"};{print NF}' | uniq | wc -l) == '1' ]]; then
+				echo "$DOIresp2"
+				>&2 echo "$DOIresp"
+			else
+				DOIinput=$(echo "$line" | cutf 1-3)
+				echo -e "$DOIinput\tDOI NA: Parse error"
+				>&2 echo "$DOIinput\tDOI NA: Parse error"
+			fi
+		else
+			if [[ $(echo "$DOIresp" | awk 'BEGIN{FS="\t"};{print NF}' | uniq | wc -l) == '1' ]]; then
+				echo "$DOIresp"
+				>&2 echo "$DOIresp"
+			else
+				DOIinput=$(echo "$line" | cutf 1-3)
+				echo -e "$DOIinput\tDOI NA: Parse error"
+				>&2 echo "$DOIinput\tDOI NA: Parse error"
+			fi
+		fi
+	done
+	IFS=$old_IFS
+}
+
+function AddPubDOI	(){
+	if [[ $(echo "$@" | cutf 4) != '' ]]; then
+		echo "$@"
+		continue
+	fi
+	printf "$(echo "$@" | cutf 1-3)\t"
+	thistitle=$(echo "$@" | cutf 3)
+	if [[ $thistitle != 'Title' ]]; then
+		thisauthor=$(echo "$@" | cutf 1)
+		thisyear=$(echo "$@" | cutf 2)
+		round1=$(pubmeddoimulti "$thistitle AND $thisauthor [AUTHOR]")
+		round1hits=$(echo "$round1" | wc -l)
+		if [[ "$round1hits" -gt '1' ]]; then
+			round2=$(pubmeddoimulti "$thistitle AND $thisauthor [AUTHOR] AND ("$thisyear"[Date - Publication] : "$thisyear"[Date - Publication])")
+			round2hits=$(echo "$round2" | wc -l)
+			if [[ "$round2hits" -gt '1' ]]; then
+				round3=$(
+					xtracted=$(pubmedextractdoi "$@")
+					xtractedtitles=$(echo "$xtracted" | cutf 3 | tr -dc "[A-Z][a-z]\n")
+					alphatitles=$(striptoalpha "$xtractedtitles")
+					thistitlealpha=$(striptoalpha "$thistitle")
+					presearchIFS=$IFS
+					IFS=$'\n'
+					titlecounter="1"
+					for searchtitle in $(echo "$alphatitles"); do
+						(( titlecounter++ ))
+						if [[ "$searchtitle" == *"$thistitlealpha"* ]]; then
+							echo "$xtracted" | sed $titlecounter'q;d' | cutf 4
+						fi
+					done
+					IFS=$presearchIFS
+				)
+				round3hits=$(echo "$round3" | wc -l)
+				if [[ "$round3hits" -gt '1' ]]; then
+					echo "ERROR multiple DOIs after 3 attempts to reduce - "$round3
+				else
+					echo $round3
+				fi
+			else
+				echo $round2
+			fi
+		else
+			echo $round1
+		fi
+	fi
+}
+
+function pmid2doirestful (){
+	curleddoi=$(pmid2doi "$@")
+	if [[ $curleddoi == '' ]]
+	then
+		echo "DOI NA (pmid2doirestful): $@"
+	else
+		echo "$curleddoi"
+	fi
+}
