@@ -5,9 +5,6 @@ if command -v tmux>/dev/null; then
 		[[ ! $TERM =~ screen ]] && [ -z $TMUX ] && tmux
 	fi
 fi
-if which ruby >/dev/null && which gem >/dev/null; then
-  PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH"
-fi
 
 source ~/dotfiles/bashrc/bashrc_exports
 source ~/dotfiles/bashrc/bashrc_functions

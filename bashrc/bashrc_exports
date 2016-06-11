@@ -28,6 +28,10 @@ export HDF5_HOME=/usr/local/hdf5/
 export LD_LIBRARY_PATH=$ROOTSYS/lib:$LD_LIBRARY_PATH
 export scholaRdaemon="/home/louis/Dropbox/Y3/Programming/scholaRdaemon/"
 
+if which ruby >/dev/null && which gem >/dev/null; then
+  PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH"
+fi
+
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
 
