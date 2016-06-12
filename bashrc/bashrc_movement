@@ -1,6 +1,7 @@
 alias togit="cd /gits"
 alias togitdrafts="cd /gits/draftposts"
 alias tobooks="cd ~/Documents/Books"
+alias tobashrc="cd ~/dotfiles/bashrc"
 
 alias tomsc="cd ~/Documents/UoMBioinfoMSc/"
 alias tomlplus="cd ~/mlplus"
