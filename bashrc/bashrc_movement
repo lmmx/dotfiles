@@ -3,10 +3,13 @@ alias togitdrafts="cd /gits/draftposts"
 alias tobooks="cd ~/Documents/Books"
 alias tobashrc="cd ~/dotfiles/bashrc"
 
-alias tomsc="cd ~/Documents/UoMBioinfoMSc/"
+alias tomsc="cd ~/msc/"
+alias tomscreadings="cd ~/msc/readings"
+alias tomscbooks="cd ~/msc/readings/books"
 alias tomlplus="cd ~/mlplus"
-alias tomlplusreadings="cd ~/mlpus/readings"
-alias torp2="cd ~/Documents/UoMBioinfoMSc/RP2"
+alias tomlplusnotes="cd ~/mlplus/notes"
+alias tomlplusreadings="cd ~/mlplus/readings"
+alias torp2="cd ~/msc/rp2"
 
 alias toscholaRdaemon='cd "$scholaRdaemon"'
 alias tocode='cd /home/louis/Documents/Code'
@@ -19,15 +22,15 @@ alias torev="cd ~/Dropbox/Y3/Project/Review/"
 alias torevlit="cd ~/Dropbox/Y3/Project/Review/Literature/"
 alias torevman="cd ~/Dropbox/Y3/Project/Review/Manuscript/"
 alias toprojwork="cd ~/Dropbox/Y3/Project/S6/"
-alias toember="cd ~/Documents/UoMBioinfoMSc/Bioinfo/ember"
+alias toember="cd ~/msc/Bioinfo/ember"
 alias togocode="cd ~/gocode"
-alias tostatscode="cd ~/Documents/UoMBioinfoMSc/Statistics/Code/code"
+alias tostatscode="cd ~/msc/Statistics/Code/code"
 alias toblogimages="cd /gits/shots/"
 
 # Current notebook(s)
 # ===================
 
 function rp2nb		{
-	cd ~/Documents/UoMBioinfoMSc/RP2/Notes;
+	cd ~/msc/rp2/notes;
 	jupyter-notebook;
 }

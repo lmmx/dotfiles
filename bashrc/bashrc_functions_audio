@@ -1,4 +1,5 @@
 function audiobitrate () { exiftool -AudioBitrate "$@"; }
+
 function mp3towav(){
   [[ $# -eq 0 ]] && { echo "mp3wav mp3file"; exit 1; }
   for i in "$@"

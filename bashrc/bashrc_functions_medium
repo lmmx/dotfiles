@@ -64,6 +64,8 @@ function pathto() {
 			cd "$(dirname $target)"
 			targetdir="$(dirs -c; dirs)"
 			cd - > /dev/null 2>&1
+		else
+			targetdir="$(dirs -c; dirs)"
 		fi
 		echo -n "$targetdir"/"$target_filename"
 	done

@@ -9,6 +9,9 @@ function grepbashrc () {
 	grepped_files=($(echo "$bashrc_results" | cut -d\: -f 1 | uniq))
 	if [ ${#grepped_files[@]} -eq 1 -a ! -z $grepped_files ]; then
 		vim -c "set syn=sh" "${grepped_files[0]}"
+		source ~/.bashrc
+		>&2 echo "Edited ${grepped_files[0]}, reloaded ~/.bashrc"
+		>&2 cd - > /dev/null
 		return
 	fi
 	>&2 echo "Matches in multiple files: select one to edit:"
@@ -28,4 +31,13 @@ function grepbashrc () {
 	done
 	((chosen_filenum--))
 	vim -c "set syn=sh" ${grepped_files[$chosen_filenum]}
+	source ~/.bashrc
+	# http://stackoverflow.com/questions/14259311/
+	# want to reset cursor back to after the line with something like
+	# tput cuu 1             # move cursor up 1 position
+	# nudgeup=`tput cuu 2`   # save it for later
+	# nudgeleft=`tput cub 2` 
+	# echo -n "           " $nudgeup "           hi" $nudgeleft "..."
+	>&2 echo ": edited ${grepped_files[$chosen_filenum]}, reloaded ~/.bashrc"
+	>&2 cd - > /dev/null
 }
