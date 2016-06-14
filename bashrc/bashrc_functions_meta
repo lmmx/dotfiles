@@ -2,7 +2,7 @@ function grepbashrc () {
 	cd ~/dotfiles/bashrc
 	bashrc_results=$(grep -ri "$@" ./* | sed '/Binary file .* matches/d')
 	if [[ -z $bashrc_results ]]; then
-		>&2 echo "No results in ~/dotfiles/bashrc/ for '$@'"
+		errecho "No results in ~/dotfiles/bashrc/ for '$@'"
 		return
 	fi
 	#echo "$bashrc_results"
@@ -10,11 +10,11 @@ function grepbashrc () {
 	if [ ${#grepped_files[@]} -eq 1 -a ! -z $grepped_files ]; then
 		vim -c "set syn=sh" "${grepped_files[0]}"
 		source ~/.bashrc
-		>&2 echo "Edited ${grepped_files[0]}, reloaded ~/.bashrc"
+		errecho "Edited ${grepped_files[0]}, reloaded ~/.bashrc"
 		>&2 cd - > /dev/null
 		return
 	fi
-	>&2 echo "Matches in multiple files: select one to edit:"
+	errecho "Matches in multiple files: select one to edit:"
 	gr_file_n=0
 	# remove this prefix from filenames, using a wildcard
 	gr_f_wc_pre="*bashrc_"
@@ -25,7 +25,7 @@ function grepbashrc () {
 	done
 	read chosen_filenum
 	while ! [ "$chosen_filenum" -gt 0 -a "$chosen_filenum" -le "$gr_file_n" ]; do
-		>&2 echo "$chosen_filenum isn't a valid option buddy."
+		errecho "$chosen_filenum isn't a valid option buddy."
 		>&2 printf "  Enter a number, 1-$gr_file_n:"
 		read chosen_filenum
 	done
@@ -38,6 +38,6 @@ function grepbashrc () {
 	# nudgeup=`tput cuu 2`   # save it for later
 	# nudgeleft=`tput cub 2` 
 	# echo -n "           " $nudgeup "           hi" $nudgeleft "..."
-	>&2 echo ": edited ${grepped_files[$chosen_filenum]}, reloaded ~/.bashrc"
+	errecho "Edited ${grepped_files[$chosen_filenum]}, reloaded ~/.bashrc"
 	>&2 cd - > /dev/null
 }

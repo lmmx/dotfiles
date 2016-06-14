@@ -87,20 +87,20 @@ function AddPubTableDOIs   () {
 			DOIresp2=$(AddPubDOI "$line" 2>/dev/null)
 			if [[ $(echo "$DOIresp2" | awk 'BEGIN{FS="\t"};{print NF}' | uniq | wc -l) == '1' ]]; then
 				echo "$DOIresp2"
-				>&2 echo "$DOIresp"
+				errecho "$DOIresp"
 			else
 				DOIinput=$(echo "$line" | cutf 1-3)
 				echo -e "$DOIinput\tDOI NA: Parse error"
-				>&2 echo "$DOIinput\tDOI NA: Parse error"
+				errecho "$DOIinput\tDOI NA: Parse error"
 			fi
 		else
 			if [[ $(echo "$DOIresp" | awk 'BEGIN{FS="\t"};{print NF}' | uniq | wc -l) == '1' ]]; then
 				echo "$DOIresp"
-				>&2 echo "$DOIresp"
+				errecho "$DOIresp"
 			else
 				DOIinput=$(echo "$line" | cutf 1-3)
 				echo -e "$DOIinput\tDOI NA: Parse error"
-				>&2 echo "$DOIinput\tDOI NA: Parse error"
+				errecho "$DOIinput\tDOI NA: Parse error"
 			fi
 		fi
 	done

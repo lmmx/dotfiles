@@ -14,7 +14,7 @@ function clipconfirm {
 # swap two files via a temporary file:
 function quickfileswap()	{
   if [ "$#" -ne 2 ]; then
-    >&2 echo "Woah there! 2 files were not provided, file swap halted."
+    errecho "Woah there! 2 files were not provided, file swap halted."
     return
   fi
 	local TMPFILE=tmp.$$

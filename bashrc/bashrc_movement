@@ -10,6 +10,8 @@ alias tomlplus="cd ~/mlplus"
 alias tomlplusnotes="cd ~/mlplus/notes"
 alias tomlplusreadings="cd ~/mlplus/readings"
 alias torp2="cd ~/msc/rp2"
+alias torp2bio="cd ~/msc/rp2/readings/bio"
+alias torp2cs="cd ~/msc/rp2/readings/cs"
 
 alias toscholaRdaemon='cd "$scholaRdaemon"'
 alias tocode='cd /home/louis/Documents/Code'
