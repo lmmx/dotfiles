@@ -1,6 +1,19 @@
 # PDF-related
 # ===========
 
+# Usage: `addreading`: uniform cropping on all edges
+#   addreading watson53_structure-for-dna.pdf 40
+
+# Usage: `addreading`: specify border cropping (anti-c/w from left)
+#   addreading watson53_structure-for-dna.pdf 30 60 30 60
+
+# If unhappy with the resizing, use `recropreading` in the same way
+
+# The `addreading` function stows the input in a subfolder 'originals'
+# to refresh the preview faster than Adobe Acrobat etc.
+
+# -----------------------------------------------------------
+
 # Add a paper, 2-up
 #  arg 1: reading file
 # (arg 3-6: trim dimensions for pdfnup)
