@@ -55,10 +55,11 @@ function findapdf	(){
 # Tilde-format file paths
 # =======================
 
-# get the path to a file, using `dirs` rather than `pwd` for nicer ~ path format
+# get the path to a file, using `dirs` rather than `readlink -f` format for nicer ~ path format
 function pathto() {
 	for target in "$@"; do
 		target_filename="$(basename $target)"
+		if [ "$target_filename" = '.' ]; then target_filename=''; fi
 		targetdir='.'
 		if [ "$(dirname $target)" != '.' ]; then
 			cd "$(dirname $target)"

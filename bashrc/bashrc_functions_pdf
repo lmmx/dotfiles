@@ -26,7 +26,7 @@ function addreading() {
 	# if directory(file)/originals doesn't exist then make it
 	originals_dir="$(dirname $outputpdf)/originals/"
 	if [ ! -d "$originals_dir" ]; then
-		>&2 printf "Creating a new folder '$originals_dir' [enter to confirm] :"
+		>&2 echo "Creating a new folder '$originals_dir'"
 		mkdir "$originals_dir"
 	fi
 	base_in=$(basename $inputpdf)
@@ -112,4 +112,124 @@ function pdftrim() {
 	else pdfnup --trim "$trim_param" $inputpdf -o $outputpdf
 	fi
 	return 0
+}
+
+# Pass in a PDF in a readings folder [or organised subfolder] and open a `touch`'d .md note
+
+# Usage:
+#   findnote maddox16_genomics-paper.pdf
+# 
+# The above will echo to STDOUT the path to its note (not useful on its own)
+# For a paper:
+#   /path/readings/
+# A new note is made if it doesn't exist:
+#   /path/notes/maddox16.md
+#
+# If no notes file is found matching the prefix (e.g. `maddox16`) the user will
+# be asked to verify whether to create the new file.
+#
+# If a second argument is passed in as well as the PDF filename, `--skip-create-check`,
+# then markdown file creation will proceed without this verification.
+#
+#   - Recommendation: use the `--skip-create-check` option when downloading the PDF
+#
+# To edit the note use takenotes in the same format, which will open editR
+#
+# TODO: allow passing in author16 to open the notes file (new function `opennote`)
+function findnote () {
+	FN_STARTDIR=$(readlink -f ./)
+	file_auth_prefix=${1%_*}
+	if [ -z $file_auth_prefix ]; then
+		file_auth_prefix=${1%.pdf}
+		>&2 echo "No arguments specified, what am I psychic? Please provide a PDF file."
+		cd $FN_STARTDIR
+		return 7
+	elif [ "$file_auth_prefix" = "$1" ]; then
+		# no change i.e. it's not a .pdf extension
+		# can't be bothered being lax in coding this
+		>&2 echo "Please provide a PDF file ('.pdf' extension not detected)."
+		>&2 echo "  [Enter to quit, or space to override and use the file anyway] "
+		read -d'' -s -n1 -r
+		if [ "$REPLY" = ' ' ]; then
+			file_auth_prefix=${1%.*}
+			>&2 echo -e "\nFile extension will be ignored."
+		else
+			>&2 echo -e "\nNote making cancelled (no files have been changed)."
+			cd $FN_STARTDIR
+			return 8
+		fi
+	fi
+	# A valid PDF file was specified, "$file_auth_prefix.md" is the note filename
+	readingfolder=$(readlink -f $(dirname $1))
+	cd $readingfolder
+	while [ "${PWD##*/}" != 'readings' ]; do
+		oldrfwd=$PWD
+		cd ..
+		if [ $oldrfwd = $PWD ]; then
+			# cannot cd upwards any further, break out of the loop
+			>&2 echo "Unable to find a 'readings' folder above the specified file."
+			notes_dir=$(readlink -f $(dirname $(readlink -f $readingfolder)))
+			>&2 echo "Defaulting to creating a 'notes/' folder above $(pathto $readingfolder)"
+			>&2 printf "  [Enter to confirm, or space to manually select its parent directory] "
+			read -d'' -s -n1 -r
+			if [ "$REPLY" = ' ' ]; then
+				notes_parent_dir=$(zenity --file-selection --directory)
+				mkdir $notes_parent_dir'/notes/'
+			fi
+		fi
+	done
+	# The following is reached when the current directory is 'readings':
+	cd .. # './readings/' is now underneath the working directory, as should be './notes/'
+	if [ ! -z $notes_parent_dir ]
+	then notes_dir=$notes_parent_dir'/notes/'
+	else notes_dir=$(readlink -f ./)"/notes/"
+	fi
+	if [ ! -d $notes_dir ]; then
+		>&2 echo "Warning: unable to find a 'notes' folder alongside the 'readings' folder."
+		>&2 echo "Creating new directory: $notes_dir"
+		>&2 printf "  [Enter to confirm, or space to manually select the directory to create a 'notes/' folder in] "
+		read -d'' -s -n1 -r
+		if [ "$REPLY" = ' ' ]; then
+			notes_parent_dir=$(zenity --file-selection --directory)
+			notes_dir=$notes_parent_dir'/notes/'
+		fi
+		mkdir $notes_dir
+	fi
+	cd $notes_dir
+	readingnotefile=$notes_dir$file_auth_prefix'.md'
+	
+	# Check if this note file exists:
+	#   If not,
+	#     $2 parameter --override-notefilecheck to be used when downloading a file and making notes concurrently
+	#     ask: create it?
+	
+	if [ -z $readingnotefile ] && [ "$2" != '--skip-create-check' ]; then
+		>&2 printf "No note file found - do you want to create it? [Enter to confirm, or space to abort] "
+		read -d'' -s -n1 -r
+		if [ "$REPLY" != ' ' ]; then
+			>&2 echo "Exitting without creating a note file..."
+			cd $FN_STARTDIR
+			return 10
+		else
+			touch $readingnotefile
+			echo -e "\n\n\n" >> $readingnotefile
+			>&2 echo "Created a new note file: $(pathto $readingnotefile)"
+		fi
+	elif [ -z $readingnotefile ]; then
+		# The `--skip-create-check` flag is on, so create the new file
+		touch $readingnotefile
+		echo -e "\n\n\n" >> $readingnotefile
+		>&2 echo "Created a new note file: $(pathto $readingnotefile)"
+	fi
+	# Finally, return the path to the note file (through STDOUT)
+	echo $readingnotefile
+	cd $FN_STARTDIR
+	return 0
+}
+
+# First argument is the PDF file in a `readings/` folder with a corresponding `notes/` folder
+#   - further arguments as per `findnote` usage guide
+function takenote () {
+	notefile=$(findnote "$@")
+	editr "$notefile"
 }

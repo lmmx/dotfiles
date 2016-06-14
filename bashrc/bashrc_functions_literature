@@ -10,10 +10,26 @@ function biorxiv-autodl() {
 	# TODO if no filename passed in then ask for it (reuse code)
 	if [ -z $2 ]; then >&2 echo "No filename provided"; return 1; fi
 	# if filename passed in ends with PDF
-	if [ $(echo $2 | rev | cut -d\. -f 1) = 'fdp' ]
-	then biorx_file="$2.pdf"
-	else biorx_file="$2"
-	fi
+	if [ "${2##*.}" = 'pdf' ]; then biorx_file="$2"; else biorx_file="$2.pdf"; fi
 	wget -O $biorx_file $1
 	addreading $biorx_file 60
+	>&2 printf "Do you want to take notes on this file now? [Press space to open editR] : "
+	read -d'' -s -n1 -r
+	if [ "$REPLY" = ' ' ]; then
+		# Skip the note creation check as it's a new file
+		>&2 echo "\nEditing file now..."
+		xdg-open "$biorx_file"
+		takenote "$biorx_file" "--skip-create-check" # opens markdown editor
+		return 0
+	fi
+	>&2 printf "\nDo you want to open this paper in a PDF viewer? [Press enter to open the default PDF viewer or any other key to finish] : "
+	read -d'' -s -n1 -r
+	if [ "$REPLY" = $'\x0a' ]; then
+		>&2 echo "Opening file in a PDF viewer now..."
+		xdg-open "$biorx_file"
+		takenote "$biorx_file" "--skip-create-check" # opens markdown editor
+	fi
+	biorx_note_file=$(findnote "$biorx_file" "--skip-create-check")
+	>&2 echo -e "\nDone. File written to $(pathto $biorx_file), note file created at $(pathto $biorx_note_file)."
+	return 0
 }

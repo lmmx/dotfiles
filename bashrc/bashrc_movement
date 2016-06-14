@@ -5,6 +5,7 @@ alias tobashrc="cd ~/dotfiles/bashrc"
 
 alias tomsc="cd ~/msc/"
 alias tomscreadings="cd ~/msc/readings"
+alias tobidir_readings="cd ~/msc/readings/bidir"
 alias tomscbooks="cd ~/msc/readings/books"
 alias tomlplus="cd ~/mlplus"
 alias tomlplusnotes="cd ~/mlplus/notes"
