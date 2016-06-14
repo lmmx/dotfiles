@@ -1,0 +1,19 @@
+# Scientific literature-related
+# =============================
+
+
+# Download a file from biorXiv with a given filename
+# Standard crop size is 60, `recropreading()` as needed
+# Usage:
+#    biorxiv-autodl http://biorxiv.org/XYZ.pdf filename
+function biorxiv-autodl() {
+	# TODO if no filename passed in then ask for it (reuse code)
+	if [ -z $2 ]; then >&2 echo "No filename provided"; return 1; fi
+	# if filename passed in ends with PDF
+	if [ $(echo $2 | rev | cut -d\. -f 1) = 'fdp' ]
+	then biorx_file="$2.pdf"
+	else biorx_file="$2"
+	fi
+	wget -O $biorx_file $1
+	addreading $biorx_file 60
+}

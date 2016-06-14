@@ -2,6 +2,7 @@ function grepbashrc () {
 	cd ~/dotfiles/bashrc
 	bashrc_results=$(grep -ri "$@" ./* | sed '/Binary file .* matches/d')
 	if [[ -z $bashrc_results ]]; then
+		# TODO: use filenames in case that's what's being searched using
 		>&2 echo "No results in ~/dotfiles/bashrc/ for '$@'"
 		return
 	fi
@@ -40,4 +41,24 @@ function grepbashrc () {
 	# echo -n "           " $nudgeup "           hi" $nudgeleft "..."
 	>&2 echo "Edited ${grepped_files[$chosen_filenum]}, reloaded ~/.bashrc"
 	>&2 cd - > /dev/null
+}
+
+function versiondotfiles () {
+	# git_toplvl="$(git rev-parse --show-toplevel)"
+	git_toplvl="/gits/dotfiles/"
+	cd $git_toplvl/
+	./src/update_bashrc_dotfiles.sh
+	>&2 echo "$git_toplvl updated"
+	git add --all
+	git status
+	>&2 echo "[Hit enter to proceed or d to view the diff]"
+	read vdf_conf
+	if [ $vdf_conf = 'd' ]; then
+		clear # remove 'd' from the top of the screen
+		git diff --cached -- "$git_toplvl"
+	fi
+	>&2 printf "Enter a commit message: "
+	read df_comm_msg
+	git commit -m "$df_comm_msg"
+	git push origin master
 }
