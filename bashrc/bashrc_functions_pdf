@@ -233,3 +233,10 @@ function takenote () {
 	notefile=$(findnote "$@")
 	editr "$notefile"
 }
+
+# Take notes and view a PDF
+# NB: can specify `--skip-create-check` (e.g. as used in `paperdl()`)
+function readnwrite () {
+	xdg-open "$1"
+	takenote "$@"
+}

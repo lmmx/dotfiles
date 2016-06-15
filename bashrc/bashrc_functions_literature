@@ -1,12 +1,16 @@
 # Scientific literature-related
 # =============================
 
+# NOTE: THIS USES ALIASES FROM bashrc_functions_pdf
 
 # Download a file from biorXiv with a given filename
 # Standard crop size is 60, `recropreading()` as needed
 # Usage:
-#    biorxiv-autodl http://biorxiv.org/XYZ.pdf filename
-function biorxiv-autodl() {
+#    paperdl http://biorxiv.org/XYZ.pdf filename
+# 
+#    Where filename is in the format 'surname16_abbrev-title' or 'surname16_abbrev-title.pdf'
+#    (.pdf extension will be added automatically if not provided)
+function paperdl() {
 	# TODO if no filename passed in then ask for it (reuse code)
 	if [ -z $2 ]; then >&2 echo "No filename provided"; return 1; fi
 	# if filename passed in ends with PDF
@@ -18,8 +22,7 @@ function biorxiv-autodl() {
 	if [ "$REPLY" = ' ' ]; then
 		# Skip the note creation check as it's a new file
 		>&2 echo "\nEditing file now..."
-		xdg-open "$biorx_file"
-		takenote "$biorx_file" "--skip-create-check" # opens markdown editor
+		readnwrite "$biorx_file" "--skip-create-check" # opens markdown editor
 		return 0
 	fi
 	>&2 printf "\nDo you want to open this paper in a PDF viewer? [Press enter to open the default PDF viewer or any other key to finish] : "
