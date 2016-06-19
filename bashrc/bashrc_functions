@@ -43,6 +43,7 @@ alias nameserverconf="sudo vim /etc/resolv.conf"
 
 # named for ease of bash tab-autocompletion
 
+function cdl () { cd "$1"; ls; }
 function errecho	(){ >&2 echo "$@"; }
 function mdclip	() { pandoc -S "$@" | xclip -t text/html -selection clipboard; }
 function cutf		(){ cut -d $'\t' -f "$@"; }
