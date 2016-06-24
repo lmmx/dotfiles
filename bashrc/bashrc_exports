@@ -27,6 +27,8 @@ export PATH=$ROOTSYS/bin:$PATH
 export HDF5_HOME=/usr/local/hdf5/
 export LD_LIBRARY_PATH=$ROOTSYS/lib:$LD_LIBRARY_PATH
 export scholaRdaemon="/home/louis/Dropbox/Y3/Programming/scholaRdaemon/"
+export SCALA_HOME="/home/louis/opt/scala"
+export PATH=$PATH:$SCALA_HOME/bin
 
 if which ruby >/dev/null && which gem >/dev/null; then
   PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH"

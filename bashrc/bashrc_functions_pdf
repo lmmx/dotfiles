@@ -242,11 +242,11 @@ function makenote () {
 
 # Pass in a filename as $1
 function pdfread() {
-	# will wait for 20 * 0.1s = 2 seconds
+	# will timeout after 50 * 0.1s = 5 seconds
 	local loops=0
 	xdg-open "$@" 2>/dev/null
 	# don't think dimensions are right, but just to push it to the other screen and maximise
-	if xdotool search --name "$@" windowactivate; then return 0; fi
+	# if xdotool search --name "$@" windowactivate; then return 0; fi
 	until wmctrl -r "$@" -e 0,1280,0,1280,1024 -b add,maximized_vert,maximized_horz; do
 		if [ $loops -eq 50 ]; then return 1; fi
 		sleep 0.1
