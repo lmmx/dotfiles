@@ -11,6 +11,7 @@ done
 alias gobuild='go build'
 alias gogetv='go get -v'
 alias chrome='google-chrome --disable-gpu'
+alias foxit='/home/louis/FoxitSoftware/FoxitReader/FoxitReader.sh'
 alias grepcol='grep --color=always'
 alias python='python3'
 alias pep8ify='autopep8 --in-place --aggressive --aggressive'
@@ -56,6 +57,7 @@ function expandt { expand -t 20,40,160 "$@"; }
 function striptoalpha	(){ for thisword in $(echo "$@" | tr -dc "[A-Z][a-z]\n" | tr [A-Z] [a-z]); do echo $thisword; done; }
 
 function neweditr () { editr --new-file "$1"; }
+function lastpic () { last-xbel-to-gimp & exit; }
 
 function mkcd() { mkdir "$@"; cd "$@"; }
 

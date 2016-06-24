@@ -16,11 +16,16 @@ alias torp2cs="cd ~/msc/rp2/readings/cs"
 alias torp2code="cd ~/msc/rp2/code"
 alias torp2docs="cd ~/msc/rp2/docs"
 alias torp2notes="cd ~/msc/rp2/notes"
-alias torp2readings="cd ~/msc/rp2/readings"
+alias torp2readings="cd ~/msc/rp2/readings/bio"
+
+alias toqueck="cd ~/queck"
+alias toqueckapp="cd ~/queck/app"
+alias toquecknotes="cd ~/queck/notes"
 
 alias toscholaRdaemon='cd "$scholaRdaemon"'
 alias tocode='cd /home/louis/Documents/Code'
 alias tocodesandpit='cd /home/louis/Documents/Code/Sandpit'
+alias tostills='cd ~/Desktop/stills'
 
 alias todb="cd ~/Dropbox"
 alias todbc="cd ~/Dropbox/louis_chimera"

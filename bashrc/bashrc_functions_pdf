@@ -231,12 +231,22 @@ function findnote () {
 #   - further arguments as per `findnote` usage guide
 function takenote () {
 	notefile=$(findnote "$@")
-	editr "$notefile"
+	atom "$notefile"
+}
+
+# As above, but don't edit it, just touch and go
+function makenote () {
+	notefile=$(findnote "$@")
+	touch "$notefile"
+}
+
+function pdfread() {
+	xdg-open "$1" 2>/dev/null	
 }
 
 # Take notes and view a PDF
 # NB: can specify `--skip-create-check` (e.g. as used in `paperdl()`)
 function readnwrite () {
-	xdg-open "$1"
+	pdfread "$1" &
 	takenote "$@"
 }

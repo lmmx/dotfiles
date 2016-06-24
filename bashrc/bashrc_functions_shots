@@ -11,7 +11,7 @@ function take-shot 	(){
 	shotfile="$(echo "$@")";
 	cp "$shotfile" "/gits/shots/$shootyear/$shootmonth";
 	shotfilename=$(basename "$shotfile");
-	encodedshot="$(python -c 'from urllib import quote; print quote("'"$shotfilename"'").encode("utf-8")')"
+	encodedshot="$(python -c 'from urllib import parse; print(parse.quote("'"$shotfilename"'"))')"
 	shots+=("https://raw.githubusercontent.com/lmmx/shots/master/$shootyear/$shootmonth/$encodedshot");
 }
 function make-shots	(){ for shot in "$@"; do take-shot $shot; done; shots=""; }

@@ -11,32 +11,31 @@
 #    Where filename is in the format 'surname16_abbrev-title' or 'surname16_abbrev-title.pdf'
 #    (.pdf extension will be added automatically if not provided)
 function paperdl() {
+	local wgetflags=''
 	# TODO if no filename passed in then ask for it (reuse code)
 	if [ -z $2 ]; then >&2 echo "No filename provided"; return 1; fi
 	# if filename passed in ends with PDF
-	if [ "${2##*.}" = 'pdf' ]; then paperdl_file="$2"; else paperdl_file="$2.pdf"; fi
-	local wgetflags=''
-	if [ $(URLPARSEpaperdl "arxiv.org/pdf/1403.6320.pdf") == 'arxiv.org' ]; then
-		wgetflags="$wgetflags"' --user-agent="Lynx"'
-	fi
-	wget -O $paperdl_file $1 $wgetflags
-	addreading $paperdl_file 60
-	>&2 printf "Do you want to take notes while you read? [Press space to open editR and the PDF] : "
+	if [ "${2##*.}" = 'pdf' ]; then biorx_file="$2"; else biorx_file="$2.pdf"; fi
+	if [ $(URLPARSEpaperdl $1) == 'arxiv.org' ]; then wgetflags="$wgetflags --user-agent=Lynx"; fi
+	wget -O $biorx_file $1 $wgetflags
+	addreading $biorx_file 60
+	>&2 printf "Do you want to take notes on this file now? [Press space to open editR] : "
 	read -d'' -s -n1 -r
 	if [ "$REPLY" = ' ' ]; then
 		# Skip the note creation check as it's a new file
 		>&2 echo "\nEditing file now..."
-		readnwrite "$paperdl_file" "--skip-create-check" # opens markdown editor
+		readnwrite "$biorx_file" "--skip-create-check" # opens markdown editor
 		return 0
 	fi
-	>&2 printf "\nDo you want to read it? [Press enter to open the default PDF viewer or any other key to finish] : "
+	>&2 printf "\nDo you want to open this paper in a PDF viewer? [Press enter to open the default PDF viewer or any other key to finish] : "
 	read -d'' -s -n1 -r
 	if [ "$REPLY" = $'\x0a' ]; then
 		>&2 echo "Opening file in a PDF viewer now..."
-		xdg-open "$paperdl_file"
+		xdg-open "$biorx_file"
+		takenote "$biorx_file" "--skip-create-check" # opens markdown editor
 	fi
-	paperdl_note_file=$(findnote "$paperdl_file" "--skip-create-check")
-	>&2 echo -e "\nDone. File written to $(pathto $paperdl_file), note file created at $(pathto $paperdl_note_file)."
+	biorx_note_file=$(findnote "$biorx_file" "--skip-create-check")
+	>&2 echo -e "\nDone. File written to $(pathto $biorx_file), note file created at $(pathto $biorx_note_file)."
 	return 0
 }
 
@@ -48,10 +47,11 @@ function URLPARSEpaperdl () {
 		>&2 echo "Multiple strings detected by URLPARSEpaperdl function (URLs cannot contain spaces!)"
 		return 1
 	fi
-	python -c "from urllib.parse import urlparse
+	python -c "from urllib import parse
 if '$URL'.find('://') == -1:
-  url = urlparse('//$URL','http')
+  url = parse.urlparse('//$URL','http')
 else:
-  url = urlparse('$URL')
+  url = parse.urlparse('$URL')
 print(url.netloc)"
+	# echo "$URL"
 }

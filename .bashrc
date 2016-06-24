@@ -2,7 +2,7 @@
 
 if command -v tmux>/dev/null; then
 	if [ ! -z "$PS1" ]; then 
-		[[ ! $TERM =~ screen ]] && [ -z $TMUX ] && tmux
+		[[ ! $TERM =~ screen ]] && [ -z $TMUX ] && exec tmux
 	fi
 fi
 
