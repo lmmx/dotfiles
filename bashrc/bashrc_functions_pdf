@@ -240,13 +240,23 @@ function makenote () {
 	touch "$notefile"
 }
 
+# Pass in a filename as $1
 function pdfread() {
-	xdg-open "$1" 2>/dev/null	
+	# will wait for 20 * 0.1s = 2 seconds
+	local loops=0
+	xdg-open "$@" 2>/dev/null
+	# don't think dimensions are right, but just to push it to the other screen and maximise
+	if xdotool search --name "$@" windowactivate; then return 0; fi
+	until wmctrl -r "$@" -e 0,1280,0,1280,1024 -b add,maximized_vert,maximized_horz; do
+		if [ $loops -eq 50 ]; then return 1; fi
+		sleep 0.1
+		((loops++))
+	done
 }
 
 # Take notes and view a PDF
 # NB: can specify `--skip-create-check` (e.g. as used in `paperdl()`)
 function readnwrite () {
-	pdfread "$1" &
+	xdg-open "$1" 2>/dev/null &	
 	takenote "$@"
 }
