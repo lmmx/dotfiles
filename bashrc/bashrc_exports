@@ -29,6 +29,7 @@ export LD_LIBRARY_PATH=$ROOTSYS/lib:$LD_LIBRARY_PATH
 export scholaRdaemon="/home/louis/Dropbox/Y3/Programming/scholaRdaemon/"
 export SCALA_HOME="/home/louis/opt/scala"
 export PATH=$PATH:$SCALA_HOME/bin
+export PATH=$PATH:/home/louis/opt/spark/bin
 
 if which ruby >/dev/null && which gem >/dev/null; then
   PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH"
@@ -46,3 +47,8 @@ export PATH="/home/louis/anaconda3/bin:$PATH"
 # Systems Biology Workbench
 export PATH="$PATH:/home/louis/sbw-2.10.0/bin/"
 export HISTTIMEFORMAT="%d/%m/%y %T " # get timestamps in history http://askubuntu.com/a/391087/266014
+
+# Automatically open .tar.gz files
+# via http://www.serverwatch.com/tutorials/article.php/3798511/Reading-Compressed-Files-With-less.htm
+# see http://www.freebsd.org/cgi/man.cgi?less(1)#INPUT_PREPROCESSOR
+export LESSOPEN="|tar --to-stdout -zxf %s"
