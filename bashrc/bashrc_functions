@@ -45,6 +45,7 @@ alias nameserverconf="sudo vim /etc/resolv.conf"
 # named for ease of bash tab-autocompletion
 
 function cdl () { cd "$1"; ls; }
+# function mvcd () { if $# == 2; then mv $1 $2; if ($2 is a directory rather than a rename) cd $2; else get the directory above $2 and cd to that; fi; else echo "Error: number of arguments is not 2" >&2; }
 function errecho	(){ >&2 echo "$@"; }
 function mdclip	() { pandoc -S "$@" | xclip -t text/html -selection clipboard; }
 function cutf		(){ cut -d $'\t' -f "$@"; }

@@ -51,4 +51,5 @@ export HISTTIMEFORMAT="%d/%m/%y %T " # get timestamps in history http://askubunt
 # Automatically open .tar.gz files
 # via http://www.serverwatch.com/tutorials/article.php/3798511/Reading-Compressed-Files-With-less.htm
 # see http://www.freebsd.org/cgi/man.cgi?less(1)#INPUT_PREPROCESSOR
-export LESSOPEN="|tar --to-stdout -zxf %s"
+# gives an error on non-tar things though what..
+# export LESSOPEN="|tar --to-stdout -zxf %s"
