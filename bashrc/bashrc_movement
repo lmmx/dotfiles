@@ -38,6 +38,8 @@ alias toember="cd ~/msc/Bioinfo/ember"
 alias togocode="cd ~/gocode"
 alias tostatscode="cd ~/msc/Statistics/Code/code"
 alias toblogimages="cd /gits/shots/"
+alias tocopermut="cd /gits/copermut.wiki/"
+alias tocopermutgithubio="cd /gits/copermut.github.io/"
 
 # Current notebook(s)
 # ===================
