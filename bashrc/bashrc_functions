@@ -60,6 +60,7 @@ function striptoalpha	(){ for thisword in $(echo "$@" | tr -dc "[A-Z][a-z]\n" | 
 function neweditr () { editr --new-file "$1"; }
 function lastpic () { last-xbel-to-gimp & exit; }
 function lastpicshow () { cd ~/Pictures; xdg-open "$(ls -t | head -1)" 2>&1 | sed 's/^.*EOG-WARNING.*load icon.*$//'; cd - 2>&1 >/dev/null; }
+function lastpicname () { cd ~/Pictures; ls -t | head -1; cd - 2>&1 >/dev/null; }
 
 function mkcd() { mkdir "$@"; cd "$@"; }
 

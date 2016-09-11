@@ -2,7 +2,7 @@ alias togit="cd /gits"
 alias togitdrafts="cd /gits/draftposts"
 alias tobooks="cd ~/Documents/Books"
 alias tobashrc="cd ~/dotfiles/bashrc"
-
+alias torain="cd ~/spin/fold/t"
 alias tomsc="cd ~/msc/"
 alias tomscreadings="cd ~/msc/readings"
 alias tobidir_readings="cd ~/msc/readings/bidir"
