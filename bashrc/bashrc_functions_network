@@ -20,3 +20,7 @@ function vpn {
 	qikea &
 	exit
 }
+
+function netpermut {
+	echo "~/"$(type syncopermut | cut -d\. -f 2) | ls
+}
