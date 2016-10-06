@@ -14,7 +14,10 @@ for conf_bashrc in ~/dotfiles/bashrc/confidential/bashrc_*; do source $conf_bash
 eval "$(hub alias -s)"
 
 #alias bib='/home/louis/.local/bin/bib'
-source /home/louis/root/bin/thisroot.sh
+if [[ -d ~/root/ ]]; then
+	# this was a pain to install so don't mess with it, CERN software see devnotes
+	source /home/louis/root/bin/thisroot.sh
+fi
 
 # Should probably update this (if I'm using TeX templates again)
 alias textemplate="vim /home/louis/R/x86_64-pc-linux-gnu-library/3.1/rmarkdown/rmd/latex/default.tex"
