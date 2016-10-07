@@ -51,6 +51,7 @@ function versiondotfiles () {
 	git_toplvl="/gits/dotfiles/"
 	cd $git_toplvl/
 	./src/update_bashrc_dotfiles.sh
+	./src/update_tmux_conf.sh
 	>&2 echo "$git_toplvl updated"
 	git add --all
 	git status
