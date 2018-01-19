@@ -52,10 +52,16 @@ function cutf		(){ cut -d $'\t' -f "$@"; }
 function cuts		(){ cut -d ' ' -f "$@"; }
 function findafile	(){ find / -iname "$@" 2>/dev/null; }
 function findit		(){ find ./ -iname "$@" 2>/dev/null; }
+function spinfind	(){ findit "$@" | tr -d \\n; }
+function spinsys 	(){ spin_systems=$(cd ~/queck; spinfind "$@"); alpha="q⠶$spin_systems" | striptorho $alpha; }
+function spinclip	(){ spinfind | xclip -sel clip; }
 function howbigis () { du -h "$@"; }
 function awkcols { awk -F "\t" '{print NF}' "$@"; }
 function expandt { expand -t 20,40,160 "$@"; }
-function striptoalpha	(){ for thisword in $(echo "$@" | tr -dc "[A-Z][a-z]\n" | tr [A-Z] [a-z]); do echo $thisword; done; }
+function striptoalpha	(){ for thisitem in $(echo "$@" | tr -dc "[A-Z][a-z]"); do echo $thisitem; done; }
+function striptonum	(){ for thisitem in $(echo "$@" | tr -dc "[0-9]"); do echo $thisitem; done; }
+function striptorho	(){ for thisword in "$@"; do echo "arg length test"; done; }
+function striptolexnum	(){ for thisword in "$@"; do echo "fancy combinatorial parser wooo"; done; }
 
 function neweditr () { editr --new-file "$1"; }
 function lastpic () { last-xbel-to-gimp & exit; }

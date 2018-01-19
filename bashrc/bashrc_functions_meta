@@ -9,10 +9,7 @@ function grepbashrc () {
 	#echo "$bashrc_results"
 	grepped_files=($(echo "$bashrc_results" | cut -d\: -f 1 | uniq))
 	if [ ${#grepped_files[@]} -eq 1 -a ! -z $grepped_files ]; then
-		# open vim with 2 commands: use .sh syntax highlighting
-		# (because bashrc_* modules lack a file extension) and do
-		# a case-insensitive (via `\c`) search for the grepped term
-		vim -c "set syn=sh" -c "bufdo /$@\c" "${grepped_files[0]}"
+		vim -c "set syn=sh" "${grepped_files[0]}"
 		source ~/.bashrc
 		>&2 echo "Edited ${grepped_files[0]}, reloaded ~/.bashrc"
 		>&2 cd - > /dev/null
@@ -34,7 +31,7 @@ function grepbashrc () {
 		read chosen_filenum
 	done
 	((chosen_filenum--))
-	vim -c "set syn=sh" -c "bufdo /$@\c" ${grepped_files[$chosen_filenum]}
+	vim -c "set syn=sh" ${grepped_files[$chosen_filenum]}
 	source ~/.bashrc
 	# http://stackoverflow.com/questions/14259311/
 	# want to reset cursor back to after the line with something like
@@ -51,7 +48,6 @@ function versiondotfiles () {
 	git_toplvl="/gits/dotfiles/"
 	cd $git_toplvl/
 	./src/update_bashrc_dotfiles.sh
-	./src/update_tmux_conf.sh
 	>&2 echo "$git_toplvl updated"
 	git add --all
 	git status

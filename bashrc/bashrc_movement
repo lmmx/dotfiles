@@ -18,8 +18,6 @@ alias torp2docs="cd ~/msc/rp2/docs"
 alias torp2notes="cd ~/msc/rp2/notes"
 alias torp2readings="cd ~/msc/rp2/readings/bio"
 
-alias tointern="cd ~/in/f/chemoinfo"
-
 alias toqueck="cd ~/queck"
 alias toqueckapp="cd ~/queck/app"
 alias toquecknotes="cd ~/queck/notes"

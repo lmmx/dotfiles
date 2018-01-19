@@ -23,4 +23,3 @@ fi
 alias textemplate="vim /home/louis/R/x86_64-pc-linux-gnu-library/3.1/rmarkdown/rmd/latex/default.tex"
 
 alias mntace='sudo mount -o ro /dev/sda4'
-
