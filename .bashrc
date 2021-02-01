@@ -9,17 +9,22 @@ fi
 source ~/dotfiles/bashrc/bashrc_exports
 source ~/dotfiles/bashrc/bashrc_functions
 source ~/dotfiles/bashrc/bashrc_movement
-for conf_bashrc in ~/dotfiles/bashrc/confidential/bashrc_*; do source $conf_bashrc; done
+source ~/.bash_completion.d/python-argcomplete
+#for conf_bashrc in ~/dotfiles/bashrc/confidential/bashrc_*; do source $conf_bashrc; done
 
 eval "$(hub alias -s)"
 
-#alias bib='/home/louis/.local/bin/bib'
-if [[ -d ~/root/ ]]; then
-	# this was a pain to install so don't mess with it, CERN software see devnotes
-	source /home/louis/root/bin/thisroot.sh
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/louis/miniconda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/louis/miniconda/etc/profile.d/conda.sh" ]; then
+        . "/home/louis/miniconda/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/louis/miniconda/bin:$PATH"
+    fi
 fi
-
-# Should probably update this (if I'm using TeX templates again)
-alias textemplate="vim /home/louis/R/x86_64-pc-linux-gnu-library/3.1/rmarkdown/rmd/latex/default.tex"
-
-alias mntace='sudo mount -o ro /dev/sda4'
+unset __conda_setup
+# <<< conda initialize <<<
