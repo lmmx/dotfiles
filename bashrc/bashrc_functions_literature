@@ -1,3 +1,39 @@
+# Website offline proxy-related
+# =============================
+
+# -p = --page-requisites, all the files necessary to display the given page (CSS etc.)
+# -k = --convert-links, convert URL links in the document to local URIs
+# -r = --recursive, follow and retrieve all linked URLs (up to default depth limit of 5)
+# -c = --continue, continue getting partially downloaded files
+# -np = --no-parent, never ascend to the parent of the target URL when recursing
+alias nprwget='wget -pkrc -np'
+alias rwget='wget -pkrc'
+
+# 2021
+# ====
+
+function paperdl_view() {
+	PAPERDL_TARGET_DIR="$HOME/Downloads/pdfs/ml/2021"
+	PAPERDL_START_WDIR=$(pwd)
+	cd $PAPERDL_TARGET_DIR
+	PAPER_URL="$1"
+	# If an arXiv link, switch to PDF export to permit `wget` to download without user-agent headers
+	PAPER_URL=$(echo $PAPER_URL \
+		| sed -E 's|^(https?://arxiv.org/abs/)(.*)|https://export.arxiv.org/pdf/\2.pdf|' \
+		| sed -E 's|^(https?://arxiv.org)(/pdf/.*)|https://export.arxiv.org\2|'
+	)
+	WGET_OUTPUT_LOG=$(wget --content-disposition "$PAPER_URL" 2>&1)
+	WGET_OUTPUT_FILE=$(echo "$WGET_OUTPUT_LOG" | grep -E "^Saving to: " -m 1 | cut -d ' ' -f 3- | sed 's/.$//; s/^.//')
+	WGET_OUTPUT_PREFIX=$(basename -s ".pdf" $WGET_OUTPUT_FILE)
+	NEW_PAPERDL_DIR="$PAPERDL_TARGET_DIR/$WGET_OUTPUT_PREFIX"
+	mkdir "$NEW_PAPERDL_DIR"
+	cd $NEW_PAPERDL_DIR
+	mv "$PAPERDL_TARGET_DIR/$WGET_OUTPUT_FILE" ./
+	pdf2up --all "$WGET_OUTPUT_FILE"
+	FIRST_PNG=$(ls *.png | head -1) # Alphabetically first
+	xdg-open $FIRST_PNG
+}
+
 # Scientific literature-related
 # =============================
 
@@ -10,7 +46,7 @@
 # 
 #    Where filename is in the format 'surname16_abbrev-title' or 'surname16_abbrev-title.pdf'
 #    (.pdf extension will be added automatically if not provided)
-function paperdl() {
+function DEPRECATED_paperdl() {
 	local wgetflags=''
 	# TODO if no filename passed in then ask for it (reuse code)
 	if [ -z $2 ]; then >&2 echo "No filename provided"; return 1; fi

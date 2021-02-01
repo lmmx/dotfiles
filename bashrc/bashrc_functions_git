@@ -1,14 +1,17 @@
 # Git-related
 # ===========
 
-source /gits/git-helpers/.git-rc
+alias gcd='cd $(git rev-parse --show-toplevel)'
 alias gstat="git status"
 alias gadd="git add --all"
 alias gdiff='git diff --cached -- "$(git rev-parse --show-toplevel)"'
 alias gdiffpre='git diff -- "$(git rev-parse --show-toplevel)"'
 alias got="git push origin master"
+alias gcmmtinit='git commit -m "Initial commit"'
+alias gpushu='git push -u origin master'
 function gcmmt { git commit -m "$@"; }
 function gcmmtpush { gcmmt "$@"; got; }
+function glogsearch { git log -S "$@"; }
 function ghclo { 
 	if [[ $# -eq 1 ]]; then
 		git clone git@github.com:"$1".git

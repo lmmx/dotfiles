@@ -24,3 +24,17 @@ function vpn {
 function netpermut {
 	echo "~/"$(type syncopermut | cut -d\. -f 2) | ls
 }
+
+function getwifibool { nmcli radio wifi; }
+# These are also saved as keyboard shortcuts (no function)
+function switchwifion { nmcli radio wifi on; } # `Fn`+`F3`
+function switchwifioff { nmcli radio wifi off; } # `Fn`+`Shift`+`F3`
+
+function togglewifi {
+  wfb=$(getwifibool)
+  if [[ $wfb = "disabled" ]]; then
+    switchwifion
+  elif [[ $wfb = "enabled" ]]; then
+    switchwifioff
+  fi
+}

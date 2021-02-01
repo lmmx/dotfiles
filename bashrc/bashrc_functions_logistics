@@ -1,0 +1,44 @@
+# Logistics-related
+# ==================
+
+function plan_logistics() {
+	local LOGI_DIR="$HOME/logistics/planning"
+	local file_ext=".mmd"
+	local date_pathstring=$(date -I | tr '-' '/' | tail -c +3)
+	local date_path=$(echo $date_pathstring | cut -d '/' -f 1-2)
+	local date_filestring=$(echo $date_pathstring | cut -d '/' -f 3)"$file_ext"
+	if [ ! -f "$LOGI_DIR/$date_path" ]; then
+		mkdir -p "$LOGI_DIR/$date_path"
+	fi
+	vim "$LOGI_DIR/$date_path/$date_filestring"
+	return 0
+}
+
+function plan_logisticscd() {
+	local LOGI_DIR="$HOME/logistics/planning"
+	local file_ext=".mmd"
+	local date_pathstring=$(date -I | tr '-' '/' | tail -c +3)
+	local date_path=$(echo $date_pathstring | cut -d '/' -f 1-2)
+	local date_filestring=$(echo $date_pathstring | cut -d '/' -f 3)"$file_ext"
+	if [ ! -f "$LOGI_DIR/$date_path" ]; then
+		mkdir -p "$LOGI_DIR/$date_path"
+	fi
+	cd "$LOGI_DIR/$date_path"
+	vim "$LOGI_DIR/$date_path/$date_filestring"
+	return 0
+}
+
+function ls_logistics() {
+	local LOGI_DIR="$HOME/logistics/planning"
+	local file_ext=".mmd"
+	# Glob all directories (yearly, then monthly)
+	for y_dir in $LOGI_DIR/*/; do
+		for m_dir in $y_dir*/; do
+			m_files=$(shopt -s nullglob dotglob; echo $m_dir*$file_ext)
+			if (( ${#m_files} )); then
+				echo "~/"$(realpath --relative-to=$HOME $m_dir)":"
+				ls $m_dir
+			fi
+		done
+	done
+}

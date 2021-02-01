@@ -1,0 +1,1 @@
+function enter_lxd_grp() { newgrp lxd; }

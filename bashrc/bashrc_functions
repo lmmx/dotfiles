@@ -23,6 +23,7 @@ alias runsdaemon-debug='Rscript "$scholaRdaemon/run_daemon" --debug'
 alias ls='ls --color=auto'
 alias less='less -R'
 alias s='less -S'
+alias clip='xclip -sel clip'
 alias tsvshow="column -t -s $'\t'"
 alias tsvview='tsvshow | s'
 alias recent='ls -ht | head'
@@ -31,6 +32,7 @@ alias webcleanclipoverwrite='webcleanclip | xclip -sel clip'
 alias c='clear'
 alias timenow="date '+%A %X'"
 alias addList="paste -sd+ | bc -l"
+alias bangq='fc -e : -1 2>/dev/null' # not for internal function use: relies on history list
 
 alias vtmuxconf='vim /home/louis/.tmux.conf'
 alias vbashrc='vim /home/louis/.bashrc'
@@ -38,9 +40,12 @@ alias bbbash='source /home/louis/.bashrc'
 alias tttmuxconf='tmux source-file /home/louis/.tmux.conf'
 alias nameserverconf="sudo vim /etc/resolv.conf"
 
-
 # Handy little helpers
 # ====================
+
+function slugname () { echo "$@" | tr ' ' '-' | python -c "import sys; print(sys.stdin.read().lower(), end='')" | tr -d "\n"; }
+function slugnamecopy () { echo "$@" | tr ' ' '-' | python -c "import sys; print(sys.stdin.read().lower(), end='')" | tr -d "\n" | xclip -sel clip; }
+function file_ends_with_newline() { [[ $(tail -c1 "$1" | wc -l) -gt 0 ]] ; }
 
 # named for ease of bash tab-autocompletion
 
@@ -52,6 +57,7 @@ function cutf		(){ cut -d $'\t' -f "$@"; }
 function cuts		(){ cut -d ' ' -f "$@"; }
 function findafile	(){ find / -iname "$@" 2>/dev/null; }
 function findit		(){ find ./ -iname "$@" 2>/dev/null; }
+function findext	(){ find ./ -type f -name "*.$@"; }
 function spinfind	(){ findit "$@" | tr -d \\n; }
 function spinsys 	(){ spin_systems=$(cd ~/queck; spinfind "$@"); alpha="q⠶$spin_systems" | striptorho $alpha; }
 function spinclip	(){ spinfind | xclip -sel clip; }
@@ -69,6 +75,46 @@ function lastpicshow () { cd ~/Pictures; xdg-open "$(ls -t | head -1)" 2>&1 | se
 function lastpicname () { cd ~/Pictures; ls -t | head -1; cd - 2>&1 >/dev/null; }
 
 function mkcd() { mkdir "$@"; cd "$@"; }
+
+function rgreprecent() {
+  for dir in $(ls -dt ./*/); do
+    grepped=$(
+      cd $dir
+      >&2 echo "⇢ "$dir
+      grep -r "$@" | sed '/^Binary file/d'
+    )
+    if [[ ! -z $grepped ]]; then
+      echo "$grepped"
+    fi
+  done
+}
+
+function rlgreprecent() {
+  for dir in $(ls -dt ./*/); do
+    grepped=$(
+      cd $dir
+      >&2 echo "⇢ "$dir
+      grep -lr "$@" | sed '/^Binary file/d' | sed -e "s|^|$dir|"
+    )
+    if [[ ! -z $grepped ]]; then
+      echo "$grepped"
+    fi
+  done
+}
+
+function rgreprecentq () { rgreprecent "$@" 2>/dev/null; }
+function rlgreprecentq () { rlgreprecent "$@" 2>/dev/null; }
+function rlgreprecentqnoswap () { rlgreprecentq "$@" | sed '/.sw[p|o]$/d'; }
+
+function vimrgreprecent() {
+  matched_files=$(rlgreprecentqnoswap "$@" | uniq)
+  vim $matched_files
+}
+
+function viewrgreprecent() {
+  matched_files=$(rlgreprecentqnoswap "$@" | uniq)
+  view $matched_files
+}
 
 # Ruby-related
 # ============
@@ -90,3 +136,20 @@ function gomakeitrun { go build; ./*; }
 
 function jekgrep () { grep -r "$@" --exclude-dir=\_site; }
 
+# Conda
+# ====================
+# via https://twitter.com/DrewFustin/status/1171804732920348673
+
+function install_miniconda () {
+  wget -O $HOME/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  bash $HOME/miniconda.sh -b -p $HOME/miniconda
+  rm $HOME/miniconda.sh
+  . $HOME/miniconda/etc/profile.d/conda.sh
+  yes | conda upgrade conda python
+  yes | $HOME/miniconda/condabin/conda install flake8 mypy pytest
+}
+
+if hash conda 2>/dev/null
+  then alias uninstall_miniconda='yes | conda install anaconda-clean; yes | anaconda-clean; rm -rf $HOME/miniconda'
+  else alias uninstall_miniconda='rm -rf $HOME/miniconda'
+fi

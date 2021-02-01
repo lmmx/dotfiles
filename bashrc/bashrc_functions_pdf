@@ -1,18 +1,39 @@
 # PDF-related
 # ===========
 
-# Usage: `addreading`: uniform cropping on all edges
-#   addreading watson53_structure-for-dna.pdf 40
+# Argument is the PDF file which will have its first page removed and then get its margins cropped
+function pdfuncovercrop () {
+	IN_PDF="$@"
+	PDF_N_PAGES=$(pdfinfo "$IN_PDF"  | grep "Pages" | sed 's/[^0-9]*//')
+	if ! [ "$PDF_N_PAGES" -eq "$PDF_N_PAGES" ] 2> /dev/null
+	then
+		>&2 echo "Non-integer page number."
+		return 1
+	fi
+	if ! [ "$PDF_N_PAGES" -gt 1 ] 2> /dev/null
+	then
+		>&2 echo "PDF does not have multiple pages."
+		return 2
+	fi
+	stapler sel "$IN_PDF" 2-"$PDF_N_PAGES" stapler_output.pdf
+	STAPLER_EXIT_CODE=$?
+	if ! [ $STAPLER_EXIT_CODE -eq 0 ] 2> /dev/null
+	then
+		>&2 echo "Stapler couldn't discard first page."
+		return 3
+	fi
+	mv stapler_output.pdf "$IN_PDF"
+	pdf-crop-margins -v -s "$IN_PDF" -o pcm_output.pdf
+	mv pcm_output.pdf "$IN_PDF"
+}
 
-# Usage: `addreading`: specify border cropping (anti-c/w from left)
-#   addreading watson53_structure-for-dna.pdf 30 60 30 60
+# Argument is the PDF file which will have its margins cropped
+function pdfcropinplace () {
+	IN_PDF="$@"
+	pdf-crop-margins -v -s "$IN_PDF" -o pcm_output.pdf
+	mv pcm_output.pdf "$IN_PDF"
+}
 
-# If unhappy with the resizing, use `recropreading` in the same way
-
-# The `addreading` function stows the input in a subfolder 'originals'
-# to refresh the preview faster than Adobe Acrobat etc.
-
-# -----------------------------------------------------------
 
 # Add a paper, 2-up
 #  arg 1: reading file
