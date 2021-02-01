@@ -5,6 +5,14 @@ function eduroam { sudo cp /etc/resolv.conf.eduroam /etc/resolv.conf; }
 function eduroamoff { sudo cp /etc/resolv.conf.google /etc/resolv.conf; }
 # Obtain nameserver address with: nmcli dev list iface wlan0
 
+function aspire_sync (){
+	rsync -avzP "louis@aspire:$1" "$2";
+}
+
+function 3xs_sync (){
+	rsync -avzP "louis@3xs:$1" "$2";
+}
+
 function hydra_sync 	(){
 	rsync -avzP $hydra_add":$1" "$2";
 }
