@@ -20,7 +20,8 @@ alias jup-debug='jupyter-notebook >> ~/Desktop/jup.log 2>> ~/Desktop/jup_err.log
 alias weather="curl -4 http://wttr.in/Manchester"
 alias runsd='Rscript "$scholaRdaemon/run_daemon"'
 alias runsdaemon-debug='Rscript "$scholaRdaemon/run_daemon" --debug'
-alias ls='ls --color=auto'
+#alias ls='ls --color=auto'
+alias ls='ls -G'
 alias less='less -R'
 alias s='less -S'
 alias clip='xclip -sel clip'

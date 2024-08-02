@@ -19,8 +19,8 @@ export PATH=$PATH:/home/louis/.scripts/exports
 #export PATH=$PATH:/home/louis/opt/BytecodeViewer
 #export PATH=$PATH:/home/louis/opt/FFcast/usr/bin
 #export PATH=$PATH:/home/louis/opt/miller/bin/
-export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[0;32m\] 🚶\[\033[01;34m\] \w \$\[\033[00m\] "
-export PS2="\[\033[0;32m\] 🚵\[\033[00m\] "
+#export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[0;32m\] 🚶\[\033[01;34m\] \w \$\[\033[00m\] "
+#export PS2="\[\033[0;32m\] 🚵\[\033[00m\] "
 #export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\]"
 export COMMAND_NOT_FOUND_FORCE_PYTHON2 # weird Anaconda-produced bug
 #export PATH=$ROOTSYS/bin:$PATH
@@ -76,7 +76,7 @@ export VIRTUALENVWRAPPER_PYTHON=/home/louis/anaconda3/bin/python
 export EDITOR=vim
 
 # for Python with pydoc.pager in ~/.pythonrc :: listpager()
-export PAGER='less -S'
+export PAGER='less -Sr'
 
 # Tesseract data: `tessdata_best` lives under here as subdirectory `tessdata`
 export TESSDATA_PREFIX="$HOME/opt/tessdatas/best/tessdata/"
