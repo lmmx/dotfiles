@@ -9,26 +9,39 @@ alias gdiffpre='git diff -- "$(git rev-parse --show-toplevel)"'
 alias got="git push origin master"
 alias gcmmtinit='git commit -m "Initial commit"'
 alias gpushu='git push -u origin master'
+alias gitnvm="git reset --soft HEAD~1"
+alias gcb='git checkout -b'
+alias gcwd='gcb $(basename $PWD)'
+function gcns { gcb "lmmx/${1-$(basename $PWD)}"; }
+function gorigadd { git remote add origin git@github.com:lmmx/"$@".git; }
 function gcmmt { git commit -m "$@"; }
 function gcmmtpush { gcmmt "$@"; got; }
+function gotbranch { branch_name=$(git rev-parse --abbrev-ref HEAD); git push origin $branch_name; }
+function gcpbranch { gcmmt "$@"; gotbranch; }
+function gpullbranch { branch_name=$(git rev-parse --abbrev-ref HEAD); git pull origin $branch_name; }
 function glogsearch { git log -S "$@"; }
-function ghclo { 
-	if [[ $# -eq 1 ]]; then
-		git clone git@github.com:"$1".git
-	else
-		echo "No repo name presented: please provide in format 'user-name/repo-name' as a single parameter to this function" >&2
-		return 1
-	fi
+function gloglast { git log -n ${1-1}; }
+function glognames { git log --name-only; }
+function glognameslast { git log --name-only -n ${1-1}; }
+function glogdiff { git log --full-diff -p; }
+function glogdifflast { git log -n ${1-1} --full-diff -p; }
+function ghclo {
+        if [[ $# -eq 1 ]]; then
+                git clone git@github.com:"$1".git
+        else
+                echo "No repo name presented: please provide in format 'user-name/repo-name' as a single parameter to this function" >&2
+                return 1
+        fi
 }
 function gclocd {
-	# git clone and enter the cloned file
-	if [[ -z "$2" ]]; then
-		reponame=$(basename "$1" ".git");
-	else
-		reponame=$2;
-	fi
-	git clone "$1" "$reponame";
-	cd "$reponame";
+        # git clone and enter the cloned file
+        if [[ -z "$2" ]]; then
+                reponame=$(basename "$1" ".git");
+        else
+                reponame=$2;
+        fi
+        git clone "$1" "$reponame";
+        cd "$reponame";
 }
 
 function gnews		  {
