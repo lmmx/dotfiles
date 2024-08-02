@@ -23,4 +23,5 @@ export PATH="$HOME/miniconda3/bin:$PATH"
 export PATH="$HOME/miniconda3/bin:$PATH"
 
 source $HOME/dotfiles/bashrc/bashrc_functions
+source $HOME/dotfiles/bashrc/bashrc_exports
 source $HOME/dotfiles/bashrc/bashrc_functions_git
